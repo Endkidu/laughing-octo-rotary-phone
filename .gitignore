@@ -1,39 +1,33 @@
-# Node modules
-node_modules/
+# Only publish index.html and README.md
+# Exclude all other files from the repository
 
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-venv/
-.env
+# Development files (not published)
+index_readable.html
+index_alternative.html
+DOCUMENTATION.md
+AUTHENTICATION.md
+New Project Workflow.yaml
+package.json
 
-# macOS
+# System files
 .DS_Store
-
-# Windows
 Thumbs.db
-ehthumbs.db
 Desktop.ini
-
-# Logs
-*.log
-
-# VS Code
-.vscode/
-
-# Build output
-dist/
-build/
-
-# Misc
 *.swp
 *.swo
+.vscode/
 .idea/
-*.bak
-*.tmp
 
-# Ignore everything except the main project files
-!index.html
-!README.md
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+
+# Environment files
+.env
+.env.local
+
+# Dependencies (if added later)
+node_modules/
+__pycache__/
+*.pyc

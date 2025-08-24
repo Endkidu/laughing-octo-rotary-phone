@@ -1,22 +1,12 @@
-# Sample GitHub Project
+# Interactive Git Workflow Guide
 
-This is a minimal project for testing Git, GitHub Pages, and static site deployment.
+A visual guide for Git workflows with step-by-step instructions.
 
-## How to use
+## Features
 
-- Edit `index.html` to customize your landing page.
-- Use `.gitignore` to keep your repository clean.
-- Do not upload sensitive or unnecessary files.
+- Interactive workflow steps
+- Progress tracking
+- Multiple themes
+- Authentication guides
 
-## Basic Git Commands
-
-```sh
-git status         # Check current changes
-git add .          # Stage all changes
-git commit -m "Describe your changes"  # Commit changes
-git push           # Upload to GitHub
-git pull           # Refresh from GitHub
-```
-
-> **Note:** This project is for testing and demo purposes only.
-Sample portfolio
+[View Live Demo](https://endkidu.github.io/laughing-octo-rotary-phone/)
