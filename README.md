@@ -1,16 +1,7 @@
-# 🚀 Git Neural Flow
+# 🧠
 
-⚡ Interactive Git workflow system with animated neural interface
+💀 git flow 🤖
 
-## 🎯 Features
-- 📋 YAML-driven workflow steps
-- 🎨 Dual theme switcher  
-- 🔑 GitHub auth guide
-- 💫 Animated bubble effects
-- 🧠 Neural network aesthetics
+� [demo](https://endkidu.github.io/laughing-octo-rotary-phone/) 🔥
 
-## 🌐 Live Demo
-[Neural Git System](https://endkidu.github.io/laughing-octo-rotary-phone/)
-
----
-⚡ 2025 Neural Git System 🧠
+💀2025🧠
