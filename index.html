@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Workflow Interactive Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .workflow-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            display: flex;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+        
+        .step.completed {
+            border-left-color: #48bb78;
+            background: #f0fff4;
+        }
+        
+        .step-number {
+            flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-right: 20px;
+        }
+        
+        .step.completed .step-number {
+            background: #48bb78;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .step-description {
+            color: #718096;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .step-command {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            border: 1px solid #2d3748;
+        }
+        
+        .step-command .comment {
+            color: #68d391;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #718096;
+        }
+        
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 40px;
+        }
+        
+        .manual-step {
+            background: #fff5f5 !important;
+            border-left-color: #f56565 !important;
+        }
+        
+        .manual-step .step-number {
+            background: #f56565 !important;
+        }
+        
+        .note {
+            background: #fef5e7;
+            border: 1px solid #f6ad55;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            color: #744210;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Git Workflow Guide</h1>
+            <p>Interactive step-by-step guide for professional Git workflows</p>
+        </div>
+        
+        <div class="workflow-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn" onclick="markNextStep()">Complete Step</button>
+                <button class="btn btn-secondary" onclick="resetWorkflow()">Reset</button>
+                <a class="btn" href="https://github.com/Endkidu/laughing-octo-rotary-phone" target="_blank">View Repository</a>
+            </div>
+            
+            <div id="workflowSteps"></div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2025 Git Workflow Guide | Learn by doing 💡</p>
+        </div>
+    </div>
+
+    <script>
+        const workflow = [
+            {
+                name: "Initialize Repository",
+                command: "git init",
+                description: "Creates a new Git repository in the current directory.",
+                manual: false
+            },
+            {
+                name: "Create Initial Files",
+                command: `echo "# My New Project" > README.md
+touch .gitignore
+echo "node_modules/" >> .gitignore
+echo "*.log" >> .gitignore`,
+                description: "Sets up a basic README and .gitignore file for a Node.js project.",
+                manual: false
+            },
+            {
+                name: "Stage Files",
+                command: "git add .",
+                description: "Adds all new and modified files to the staging area.",
+                manual: false
+            },
+            {
+                name: "Initial Commit",
+                command: `git commit -m "Initial commit: setup project structure"`,
+                description: "Commits the staged files with an initial message.",
+                manual: false
+            },
+            {
+                name: "Create Main Branch",
+                command: "git branch -m main",
+                description: "Renames the default branch to 'main' for consistency.",
+                manual: false
+            },
+            {
+                name: "Set Up Remote Repository",
+                command: `git remote add origin https://github.com/Endkidu/laughing-octo-rotary-phone.git
+# Replace with your actual GitHub repo URL`,
+                description: "Links the local repository to a remote GitHub repository.",
+                manual: false
+            },
+            {
+                name: "Push to Remote",
+                command: "git push -u origin main",
+                description: "Pushes the local 'main' branch to the remote repository and sets upstream.",
+                manual: false
+            },
+            {
+                name: "Create Development Branch",
+                command: "git checkout -b develop",
+                description: "Creates and switches to a 'develop' branch for ongoing work.",
+                manual: false
+            },
+            {
+                name: "Add Feature",
+                command: `echo "function hello() { console.log('Hello, World!'); }" > index.js
+git add index.js
+git commit -m "Add initial feature: hello function"`,
+                description: "Adds a simple feature and commits it to the 'develop' branch.",
+                manual: false
+            },
+            {
+                name: "Push Development Branch",
+                command: "git push origin develop",
+                description: "Pushes the 'develop' branch to the remote repository.",
+                manual: false
+            },
+            {
+                name: "Create Pull Request",
+                command: "# Manual step: Go to GitHub and create PR",
+                description: "Go to GitHub, create a pull request from 'develop' to 'main' for review.",
+                manual: true,
+                note: "This step requires manual action on the GitHub website."
+            },
+            {
+                name: "Merge and Sync",
+                command: `git checkout main
+git pull origin main
+git merge develop
+git push origin main`,
+                description: "Merges the 'develop' branch into 'main' and pushes the updated 'main' branch.",
+                manual: false
+            },
+            {
+                name: "Tag Release",
+                command: `git tag -a v1.0.0 -m "Initial release"
+git push origin v1.0.0`,
+                description: "Creates and pushes a version tag for the release.",
+                manual: false
+            },
+            {
+                name: "Cleanup",
+                command: `git branch -d develop
+git push origin --delete develop`,
+                description: "Optionally deletes the development branch after successful merge.",
+                manual: false
+            }
+        ];
+
+        let currentStep = 0;
+
+        function renderWorkflow() {
+            const container = document.getElementById('workflowSteps');
+            container.innerHTML = '';
+
+            workflow.forEach((step, index) => {
+                const stepElement = document.createElement('div');
+                stepElement.className = `step ${index < currentStep ? 'completed' : ''} ${step.manual ? 'manual-step' : ''}`;
+                stepElement.onclick = () => toggleStep(index);
+
+                const formattedCommand = step.command.replace(/(#.*)/g, '<span class="comment">$1</span>');
+
+                stepElement.innerHTML = `
+                    <div class="step-number">${index + 1}</div>
+                    <div class="step-content">
+                        <div class="step-title">${step.name}</div>
+                        <div class="step-description">${step.description}</div>
+                        <div class="step-command">${formattedCommand}</div>
+                        ${step.note ? `<div class="note"><strong>Note:</strong> ${step.note}</div>` : ''}
+                    </div>
+                `;
+
+                container.appendChild(stepElement);
+            });
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = (currentStep / workflow.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+
+        function markNextStep() {
+            if (currentStep < workflow.length) {
+                currentStep++;
+                renderWorkflow();
+            }
+        }
+
+        function resetWorkflow() {
+            currentStep = 0;
+            renderWorkflow();
+        }
+
+        function toggleStep(index) {
+            if (index < currentStep) {
+                currentStep = index;
+            } else if (index === currentStep) {
+                currentStep = index + 1;
+            }
+            renderWorkflow();
+        }
+
+        // Initialize
+        renderWorkflow();
+    </script>
+</body>
+</html>

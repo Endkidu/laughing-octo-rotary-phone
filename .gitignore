@@ -1,0 +1,39 @@
+# Node modules
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# Build output
+dist/
+build/
+
+# Misc
+*.swp
+*.swo
+.idea/
+*.bak
+*.tmp
+
+# Ignore everything except the main project files
+!index.html
+!README.md
