@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Git Workflow Interactive Guide</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,23 +12,137 @@
             box-sizing: border-box;
         }
         
-        body {
+        /* Professional Theme (Default) */
+        body.professional {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #333;
+            transition: all 0.5s ease;
+        }
+        
+        /* Cyberpunk Theme */
+        body.cyberpunk {
+            font-family: 'JetBrains Mono', monospace;
+            background: radial-gradient(circle at 20% 80%, #0f0f0f 0%, #1a0033 30%, #000 70%), 
+                        linear-gradient(135deg, #ff006e 0%, #8338ec 25%, #3a86ff 50%, #06ffa5 75%, #ffbe0b 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+            min-height: 100vh;
+            color: #00ff88;
+            transition: all 0.5s ease;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        body.cyberpunk::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300ff88' fill-opacity='0.03'%3E%3Cpath d='m36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+            z-index: -2;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .theme-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .theme-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .theme-btn.professional {
+            background: #667eea;
+            color: white;
+        }
+        
+        .theme-btn.cyberpunk {
+            background: #00ff88;
+            color: #000;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .theme-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .content-switcher {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .content-btn {
+            padding: 12px 24px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        body.professional .content-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        body.cyberpunk .content-btn {
+            background: rgba(0,255,136,0.1);
+            color: #00ff88;
+            border: 2px solid #00ff88;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .content-btn.active {
+            background: #fff !important;
+            color: #333 !important;
+        }
+        
+        body.cyberpunk .content-btn.active {
+            background: #00ff88 !important;
+            color: #000 !important;
         }
         
         .header {
             text-align: center;
-            color: white;
             margin-bottom: 40px;
+        }
+        
+        body.professional .header {
+            color: white;
+        }
+        
+        body.cyberpunk .header {
+            color: #00ff88;
         }
         
         .header h1 {
@@ -38,9 +152,22 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
+        body.cyberpunk .header h1 {
+            font-family: 'Orbitron', monospace;
+            text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff88;
+        }
+        
         .header p {
             font-size: 1.2rem;
             opacity: 0.9;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
         }
         
         .workflow-container {
@@ -49,6 +176,12 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             padding: 40px;
             margin-bottom: 30px;
+        }
+        
+        body.cyberpunk .workflow-container {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #00ff88;
+            box-shadow: 0 0 30px rgba(0,255,136,0.3);
         }
         
         .step {
@@ -63,14 +196,29 @@
             position: relative;
         }
         
+        body.cyberpunk .step {
+            background: rgba(0,255,136,0.05);
+            border-left: 5px solid #00ff88;
+            border: 1px solid rgba(0,255,136,0.2);
+        }
+        
         .step:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
         }
         
+        body.cyberpunk .step:hover {
+            box-shadow: 0 8px 25px rgba(0,255,136,0.3);
+        }
+        
         .step.completed {
             border-left-color: #48bb78;
             background: #f0fff4;
+        }
+        
+        body.cyberpunk .step.completed {
+            border-left-color: #00ff88;
+            background: rgba(0,255,136,0.1);
         }
         
         .step-number {
@@ -88,8 +236,20 @@
             margin-right: 20px;
         }
         
+        body.cyberpunk .step-number {
+            background: #00ff88;
+            color: #000;
+            font-family: 'JetBrains Mono', monospace;
+            border: 2px solid #00ff88;
+        }
+        
         .step.completed .step-number {
             background: #48bb78;
+        }
+        
+        body.cyberpunk .step.completed .step-number {
+            background: #00ff88;
+            box-shadow: 0 0 20px #00ff88;
         }
         
         .step-content {
@@ -103,10 +263,19 @@
             margin-bottom: 8px;
         }
         
+        body.cyberpunk .step-title {
+            color: #00ff88;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
         .step-description {
             color: #718096;
             margin-bottom: 15px;
             line-height: 1.6;
+        }
+        
+        body.cyberpunk .step-description {
+            color: #88ccaa;
         }
         
         .step-command {
@@ -122,8 +291,18 @@
             border: 1px solid #2d3748;
         }
         
+        body.cyberpunk .step-command {
+            background: #000;
+            border: 1px solid #00ff88;
+            box-shadow: inset 0 0 10px rgba(0,255,136,0.1);
+        }
+        
         .step-command .comment {
             color: #68d391;
+        }
+        
+        body.cyberpunk .step-command .comment {
+            color: #00ff88;
         }
         
         .progress-bar {
@@ -135,12 +314,22 @@
             overflow: hidden;
         }
         
+        body.cyberpunk .progress-bar {
+            background: rgba(0,255,136,0.2);
+            border: 1px solid #00ff88;
+        }
+        
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #667eea, #764ba2);
             width: 0%;
             transition: width 0.5s ease;
             border-radius: 4px;
+        }
+        
+        body.cyberpunk .progress-fill {
+            background: linear-gradient(90deg, #00ff88, #ff006e);
+            box-shadow: 0 0 10px #00ff88;
         }
         
         .controls {
@@ -162,24 +351,52 @@
             text-decoration: none;
         }
         
+        body.cyberpunk .btn {
+            background: #00ff88;
+            color: #000;
+            border: 2px solid #00ff88;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
         .btn:hover {
             background: #5a67d8;
             transform: translateY(-1px);
+        }
+        
+        body.cyberpunk .btn:hover {
+            background: #00dd77;
+            box-shadow: 0 0 20px #00ff88;
         }
         
         .btn-secondary {
             background: #718096;
         }
         
+        body.cyberpunk .btn-secondary {
+            background: transparent;
+            color: #00ff88;
+        }
+        
         .btn-secondary:hover {
             background: #4a5568;
         }
         
+        body.cyberpunk .btn-secondary:hover {
+            background: rgba(0,255,136,0.1);
+        }
+        
         .footer {
             text-align: center;
-            color: white;
             opacity: 0.8;
             margin-top: 40px;
+        }
+        
+        body.professional .footer {
+            color: white;
+        }
+        
+        body.cyberpunk .footer {
+            color: #00ff88;
         }
         
         .manual-step {
@@ -187,8 +404,18 @@
             border-left-color: #f56565 !important;
         }
         
+        body.cyberpunk .manual-step {
+            background: rgba(255,0,110,0.1) !important;
+            border-left-color: #ff006e !important;
+        }
+        
         .manual-step .step-number {
             background: #f56565 !important;
+        }
+        
+        body.cyberpunk .manual-step .step-number {
+            background: #ff006e !important;
+            color: white !important;
         }
         
         .note {
@@ -200,27 +427,173 @@
             color: #744210;
             font-size: 0.9rem;
         }
+        
+        body.cyberpunk .note {
+            background: rgba(255,190,11,0.1);
+            border: 1px solid #ffbe0b;
+            color: #ffbe0b;
+        }
+        
+        .yaml-viewer {
+            background: #1a202c;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #e2e8f0;
+            overflow-x: auto;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        
+        body.cyberpunk .yaml-viewer {
+            background: #000;
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            box-shadow: 0 0 20px rgba(0,255,136,0.2);
+        }
+        
+        .yaml-key {
+            color: #68d391;
+        }
+        
+        body.cyberpunk .yaml-key {
+            color: #00ff88;
+        }
+        
+        .yaml-string {
+            color: #fbb6ce;
+        }
+        
+        body.cyberpunk .yaml-string {
+            color: #ff006e;
+        }
+        
+        .auth-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        body.cyberpunk .auth-section {
+            background: rgba(0,255,136,0.1);
+            border: 1px solid #00ff88;
+        }
+        
+        .auth-step {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        body.cyberpunk .auth-step {
+            background: rgba(0,255,136,0.05);
+            border-left-color: #00ff88;
+        }
+        
+        .auth-step h3 {
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        body.cyberpunk .auth-step h3 {
+            color: #00ff88;
+        }
+        
+        .auth-step code {
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .auth-step a {
+            color: #667eea;
+        }
+        
+        body.cyberpunk .auth-step a {
+            color: #00ff88;
+        }
     </style>
 </head>
-<body>
+<body class="professional">
+    <div class="theme-switcher">
+        <button class="theme-btn professional" onclick="setTheme('professional')">Professional</button>
+        <button class="theme-btn cyberpunk" onclick="setTheme('cyberpunk')">Cyberpunk</button>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>🚀 Git Workflow Guide</h1>
             <p>Interactive step-by-step guide for professional Git workflows</p>
         </div>
         
-        <div class="workflow-container">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
+        <div class="content-switcher">
+            <button class="content-btn active" onclick="showContent('workflow')">Interactive Workflow</button>
+            <button class="content-btn" onclick="showContent('yaml')">YAML Source</button>
+            <button class="content-btn" onclick="showContent('auth')">GitHub Authentication</button>
+        </div>
+
+        <!-- Interactive Workflow Section -->
+        <div id="workflow-content" class="content-section active">
+            <div class="workflow-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn" onclick="markNextStep()">Complete Step</button>
+                    <button class="btn btn-secondary" onclick="resetWorkflow()">Reset</button>
+                    <a class="btn" href="https://github.com/Endkidu/laughing-octo-rotary-phone" target="_blank">View Repository</a>
+                </div>
+                
+                <div id="workflowSteps"></div>
             </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="markNextStep()">Complete Step</button>
-                <button class="btn btn-secondary" onclick="resetWorkflow()">Reset</button>
-                <a class="btn" href="https://github.com/Endkidu/laughing-octo-rotary-phone" target="_blank">View Repository</a>
+        </div>
+
+        <!-- YAML Source Section -->
+        <div id="yaml-content" class="content-section">
+            <div class="workflow-container">
+                <h2 style="margin-bottom: 20px; text-align: center;">Workflow Configuration (YAML)</h2>
+                <div class="yaml-viewer" id="yamlViewer"></div>
             </div>
-            
-            <div id="workflowSteps"></div>
+        </div>
+
+        <!-- GitHub Authentication Section -->
+        <div id="auth-content" class="content-section">
+            <div class="workflow-container">
+                <h2 style="margin-bottom: 30px; text-align: center;">GitHub Authentication Setup</h2>
+                
+                <div class="auth-section">
+                    <div class="auth-step">
+                        <h3>🔑 Option 1: Personal Access Token (Recommended)</h3>
+                        <p>1. Go to <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings → Tokens</a></p>
+                        <p>2. Click "Generate new token (classic)"</p>
+                        <p>3. Select <code>repo</code> scope for full repository access</p>
+                        <p>4. Copy the generated token</p>
+                        <p>5. Use token as password when Git prompts</p>
+                    </div>
+                    
+                    <div class="auth-step">
+                        <h3>🔐 Option 2: SSH Key Setup</h3>
+                        <p>1. Generate SSH key: <code>ssh-keygen -t ed25519 -C "your_email@example.com"</code></p>
+                        <p>2. Add to SSH agent: <code>ssh-add ~/.ssh/id_ed25519</code></p>
+                        <p>3. Copy public key: <code>cat ~/.ssh/id_ed25519.pub</code></p>
+                        <p>4. Add to <a href="https://github.com/settings/keys" target="_blank">GitHub SSH Keys</a></p>
+                        <p>5. Change remote URL: <code>git remote set-url origin git@github.com:Endkidu/laughing-octo-rotary-phone.git</code></p>
+                    </div>
+                    
+                    <div class="auth-step">
+                        <h3>💡 Quick Fix Commands</h3>
+                        <div class="step-command">git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+git push origin main  <span class="comment"># Will prompt for username/token</span></div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div class="footer">
@@ -328,7 +701,111 @@ git push origin --delete develop`,
             }
         ];
 
+        const yamlContent = `name: New Project Workflow
+
+steps:
+  - name: Initialize Repository
+    command: git init
+    description: Creates a new Git repository in the current directory.
+
+  - name: Create Initial Files
+    command: |
+      echo "# My New Project" > README.md
+      touch .gitignore
+      echo "node_modules/" >> .gitignore
+      echo "*.log" >> .gitignore
+    description: Sets up a basic README and .gitignore file for a Node.js project.
+
+  - name: Stage Files
+    command: git add .
+    description: Adds all new and modified files to the staging area.
+
+  - name: Initial Commit
+    command: git commit -m "Initial commit: setup project structure"
+    description: Commits the staged files with an initial message.
+
+  - name: Create Main Branch
+    command: git branch -m main
+    description: Renames the default branch to 'main' for consistency.
+
+  - name: Set Up Remote Repository
+    command: |
+      git remote add origin https://github.com/Endkidu/laughing-octo-rotary-phone.git
+      # Replace with your actual GitHub repo URL
+    description: Links the local repository to a remote GitHub repository.
+
+  - name: Push to Remote
+    command: git push -u origin main
+    description: Pushes the local 'main' branch to the remote repository and sets upstream.
+
+  - name: Create Development Branch
+    command: git checkout -b develop
+    description: Creates and switches to a 'develop' branch for ongoing work.
+
+  - name: Add Feature
+    command: |
+      echo "function hello() { console.log('Hello, World!'); }" > index.js
+      git add index.js
+      git commit -m "Add initial feature: hello function"
+    description: Adds a simple feature and commits it to the 'develop' branch.
+
+  - name: Push Development Branch
+    command: git push origin develop
+    description: Pushes the 'develop' branch to the remote repository.
+
+  - name: Create Pull Request (Manual Step)
+    description: Go to GitHub, create a pull request from 'develop' to 'main' for review.
+    note: This step requires manual action on the GitHub website.
+
+  - name: Merge and Sync
+    command: |
+      git checkout main
+      git pull origin main
+      git merge develop
+      git push origin main
+    description: Merges the 'develop' branch into 'main' and pushes the updated 'main' branch.
+
+  - name: Tag Release
+    command: |
+      git tag -a v1.0.0 -m "Initial release"
+      git push origin v1.0.0
+    description: Creates and pushes a version tag for the release.
+
+  - name: Cleanup
+    command: |
+      git branch -d develop
+      git push origin --delete develop
+    description: Optionally deletes the development branch after successful merge.`;
+
         let currentStep = 0;
+
+        function setTheme(theme) {
+            document.body.className = theme;
+            localStorage.setItem('theme', theme);
+        }
+
+        function showContent(section) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.content-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(section + '-content').classList.add('active');
+            event.target.classList.add('active');
+            
+            if (section === 'yaml') {
+                displayYAML();
+            }
+        }
+
+        function displayYAML() {
+            const viewer = document.getElementById('yamlViewer');
+            let formatted = yamlContent
+                .replace(/^(\s*\w+):/gm, '<span class="yaml-key">$1</span>:')
+                .replace(/: (.*)/g, ': <span class="yaml-string">$1</span>')
+                .replace(/(#.*)/g, '<span class="comment">$1</span>');
+            viewer.innerHTML = formatted;
+        }
 
         function renderWorkflow() {
             const container = document.getElementById('workflowSteps');
@@ -384,7 +861,11 @@ git push origin --delete develop`,
         }
 
         // Initialize
-        renderWorkflow();
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'professional';
+            setTheme(savedTheme);
+            renderWorkflow();
+        });
     </script>
 </body>
 </html>
